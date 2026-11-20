@@ -2,10 +2,13 @@ package com.devsuperior.dsmeta.dto;
 
 import java.time.LocalDate;
 
+import jakarta.validation.constraints.PastOrPresent;
+
 public class SaleSellerDTO {
 
 	private Long id;
 	private Double amount;
+	@PastOrPresent(message = "Não pode ser uma data futura.")
 	private LocalDate date;
 	private String sellerName;
 	

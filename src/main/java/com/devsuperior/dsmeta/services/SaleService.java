@@ -3,6 +3,8 @@ package com.devsuperior.dsmeta.services;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,25 +33,25 @@ public class SaleService {
 	}
 	
 	@Transactional(readOnly = true)
-	public Page<SaleSellerMinDTO> getSummaryBetweenDates(String minDate, String maxDate, Pageable pageable){
-		Page<SaleSellerMinDTO> dtos; 
+	public List<SaleSellerMinDTO> getSummaryBetweenDates(String minDate, String maxDate, Pageable pageable){
+		List<SaleSellerMinDTO> dtos = new ArrayList<>(); 
 		LocalDate today = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
 		LocalDate dataDeUmAnoAtras = today.minusYears(1L);
-		
+
 		if(minDate == null && maxDate == null) {
-			dtos = repository.searchSummaryJPQL(dataDeUmAnoAtras, pageable);
-		}else if(minDate != null && maxDate == null) {
-			LocalDate min = LocalDate.parse(minDate);
-			dtos = repository.searchSummaryJPQL(min, pageable);
-		}else if((minDate == null && maxDate != null) || maxDate.isEmpty()){
-			dtos = repository.searchSummaryJPQL(today, pageable);
-		}else if(minDate.isEmpty()){
-			dtos = repository.searchSummaryBetweenDatesJPQL(dataDeUmAnoAtras, today, pageable);
-		}else{ 
+			dtos = repository.searchSummaryBetweenDatesJPQL(dataDeUmAnoAtras, today);
+		}else if(minDate != null && maxDate != null) {
 			LocalDate min = LocalDate.parse(minDate);
 			LocalDate max = LocalDate.parse(maxDate);
-			dtos = repository.searchSummaryBetweenDatesJPQL(min, max, pageable);
+			dtos = repository.searchSummaryBetweenDatesJPQL(min, max);
+		}else if(minDate != null && maxDate == null) {
+			LocalDate min = LocalDate.parse(minDate);
+			dtos = repository.searchSummaryBetweenDatesJPQL(min, today);			
+		}else if(minDate == null && maxDate != null) {
+			LocalDate max = LocalDate.parse(maxDate);
+			dtos = repository.searchSummaryBetweenDatesJPQL(dataDeUmAnoAtras, max);
 		}
+
 		return dtos;
 	}
 

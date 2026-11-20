@@ -4,10 +4,13 @@ import java.time.LocalDate;
 
 import com.devsuperior.dsmeta.entities.Sale;
 
+import jakarta.validation.constraints.PastOrPresent;
+
 public class SaleMinDTO {
 
 	private Long id;
 	private Double amount;
+	@PastOrPresent(message = "Não pode ser uma data futura.")
 	private LocalDate date;
 	
 	public SaleMinDTO(Long id, Double amount, LocalDate date) {
